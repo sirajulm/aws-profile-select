@@ -67,7 +67,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     .build()?;
 
 
-    let list: Vec<String> = config.collect()?.keys().cloned().map(|item| item.replace("profile ", "")).collect();
+    let list: Vec<String> = config
+        .collect()?
+        .keys()
+        .filter(|key| !key.contains("sso-session"))
+        .map(|key| key.replace("profile ", ""))
+        .collect();
 
     let chosen_profile = select_aws_profile(list, current_aws_profile);
 
