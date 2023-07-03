@@ -1,6 +1,9 @@
 name: "Main: Run"
 on:
   workflow_dispatch: {}
+  push:
+    branches:
+      - "aws-main"
   
 jobs:
   build:

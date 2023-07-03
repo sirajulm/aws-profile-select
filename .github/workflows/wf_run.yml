@@ -4,12 +4,11 @@ on:
   workflow_run:
     workflows: ["Main: Run"]
     types: [completed]
-    branches: [main]
-    
+    branches: [aws-main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: "Deploy: PR branch to AWS"
         uses: actions/checkout@v2
-      
