@@ -12,4 +12,3 @@ path = "src/aws-profile-select/main.rs"
 [dependencies]
 config = "0.15.0"
 dialoguer = "0.12.0"
-ini = "1.3.0"
