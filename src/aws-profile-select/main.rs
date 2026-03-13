@@ -1,21 +1,7 @@
 use std::{env};
 use std::error::Error;
 use config::{Config, Source, FileFormat};
-use std::fmt;
 use dialoguer::{Select, theme::ColorfulTheme};
-
-#[derive(Debug)]
-struct MyError {
-    message: String,
-}
-
-impl Error for MyError {}
-
-impl fmt::Display for MyError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "MyError: {}", self.message)
-    }
-}
 
 fn get_env(env_key: &str) -> String {
     let profile =  env::var_os(env_key);
@@ -39,7 +25,7 @@ fn select_aws_profile(mut list: Vec<String>, default: String) -> String {
         None => {0}
     };
 
-    let chosen_result : Result<usize, std::io::Error> = Select::with_theme(&ColorfulTheme::default())
+    let chosen_result : Result<usize, dialoguer::Error> = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Select the AWS Profile to switch")
         .items(&list)
         .default(current_profile_index)
