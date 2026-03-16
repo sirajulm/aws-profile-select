@@ -6,6 +6,7 @@ use config::{Config, FileFormat, Source, Value};
 pub struct Profile {
     pub name: String,
     pub environment: Option<String>,
+    pub sso_session: Option<String>,
 }
 
 pub fn get_env(env_key: &str) -> String {
@@ -29,12 +30,20 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
         .filter(|(key, _)| !key.contains("sso-session"))
         .map(|(key, value)| {
             let name = key.replace("profile ", "");
-            let environment = value
+            let (environment, sso_session) = value
                 .into_table()
                 .ok()
-                .and_then(|table| table.get("environment").cloned())
-                .and_then(|v| v.into_string().ok());
-            Profile { name, environment }
+                .map(|table| {
+                    let environment = table
+                        .get("environment")
+                        .and_then(|v| v.clone().into_string().ok());
+                    let sso_session = table
+                        .get("sso_session")
+                        .and_then(|v| v.clone().into_string().ok());
+                    (environment, sso_session)
+                })
+                .unwrap_or((None, None));
+            Profile { name, environment, sso_session }
         })
         .collect();
 
