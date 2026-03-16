@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::error::Error;
+use std::process::Command;
 use aws_profile_select::{get_env, parse_profiles};
 use dialoguer::{Select, theme::ColorfulTheme};
 
@@ -79,6 +80,27 @@ fn main() -> Result<(), Box<dyn Error>> {
             Some(idx) => profile_names[idx].clone(),
         }
     };
+
+    let profile_uses_sso = profiles
+        .iter()
+        .find(|p| p.name == chosen_profile)
+        .map(|p| p.is_sso())
+        .unwrap_or(false);
+
+    if profile_uses_sso {
+        let status = Command::new("aws")
+            .args(["sso", "login", "--profile", &chosen_profile])
+            .status()
+            .map_err(|e| format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"))?;
+        if !status.success() {
+            return Err(format!(
+                "'aws sso login --profile {}' failed with exit code: {}",
+                chosen_profile,
+                status.code().unwrap_or(-1)
+            )
+            .into());
+        }
+    }
 
     println!("export {}='{}';", AWS_PROFILE, chosen_profile);
 

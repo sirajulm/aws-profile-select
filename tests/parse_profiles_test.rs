@@ -116,6 +116,110 @@ sso_region = eu-central-1
 }
 
 // ---------------------------------------------------------------------------
+// parse_profiles – sso_session field (modern SSO)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn parse_profiles_reads_sso_session_field() {
+    let content = "\
+[profile sso-dev]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = DevAccess
+region = eu-central-1
+";
+    let path = write_temp_config("aws_ps_test_sso_session.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles.len(), 1);
+    assert_eq!(profiles[0].name, "sso-dev");
+    assert_eq!(profiles[0].sso_session, Some("my-sso".to_string()));
+    assert_eq!(profiles[0].sso_start_url, None);
+    assert!(profiles[0].is_sso());
+}
+
+#[test]
+fn parse_profiles_sso_session_is_none_when_field_absent() {
+    let content = "\
+[profile iam-user]
+region = us-east-1
+";
+    let path = write_temp_config("aws_ps_test_no_sso_session.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles.len(), 1);
+    assert_eq!(profiles[0].name, "iam-user");
+    assert_eq!(profiles[0].sso_session, None);
+    assert_eq!(profiles[0].sso_start_url, None);
+    assert!(!profiles[0].is_sso());
+}
+
+#[test]
+fn parse_profiles_mixed_sso_and_non_sso() {
+    let content = "\
+[profile sso-prod]
+sso_session = corp-sso
+sso_account_id = 111111111111
+sso_role_name = ProdAdmin
+region = us-east-1
+
+[profile iam-legacy]
+region = eu-west-1
+";
+    let path = write_temp_config("aws_ps_test_mixed_sso.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles.len(), 2);
+    // sorted alphabetically: iam-legacy < sso-prod
+    assert_eq!(profiles[0].name, "iam-legacy");
+    assert_eq!(profiles[0].sso_session, None);
+    assert!(!profiles[0].is_sso());
+    assert_eq!(profiles[1].name, "sso-prod");
+    assert_eq!(profiles[1].sso_session, Some("corp-sso".to_string()));
+    assert!(profiles[1].is_sso());
+}
+
+// ---------------------------------------------------------------------------
+// parse_profiles – sso_start_url field (legacy SSO, no sso_session)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn parse_profiles_reads_sso_start_url_field() {
+    let content = "\
+[profile sso-legacy]
+sso_start_url = https://my-org.awsapps.com/start
+sso_account_id = 123456789012
+sso_role_name = ReadOnly
+sso_region = eu-central-1
+region = eu-central-1
+";
+    let path = write_temp_config("aws_ps_test_sso_start_url.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles.len(), 1);
+    assert_eq!(profiles[0].name, "sso-legacy");
+    assert_eq!(profiles[0].sso_session, None);
+    assert_eq!(
+        profiles[0].sso_start_url,
+        Some("https://my-org.awsapps.com/start".to_string())
+    );
+    assert!(profiles[0].is_sso());
+}
+
+#[test]
+fn parse_profiles_is_sso_false_for_iam_profile() {
+    let content = "\
+[profile iam-only]
+region = us-east-1
+";
+    let path = write_temp_config("aws_ps_test_iam_only.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles.len(), 1);
+    assert!(!profiles[0].is_sso());
+}
+
+// ---------------------------------------------------------------------------
 // parse_profiles – alphabetical ordering
 // ---------------------------------------------------------------------------
 
