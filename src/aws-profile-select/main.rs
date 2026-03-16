@@ -84,14 +84,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     let profile_uses_sso = profiles
         .iter()
         .find(|p| p.name == chosen_profile)
-        .map(|p| p.sso_session.is_some())
+        .map(|p| p.is_sso())
         .unwrap_or(false);
 
     if profile_uses_sso {
         let status = Command::new("aws")
             .args(["sso", "login", "--profile", &chosen_profile])
             .status()
-            .map_err(|e| format!("Failed to execute 'aws' command (is it installed and in PATH?): {e}"))?;
+            .map_err(|e| format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"))?;
         if !status.success() {
             return Err(format!(
                 "'aws sso login --profile {}' failed with exit code: {}",
