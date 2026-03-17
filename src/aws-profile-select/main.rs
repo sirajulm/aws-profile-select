@@ -1,8 +1,8 @@
+use aws_profile_select::{get_env, parse_profiles};
+use dialoguer::{theme::ColorfulTheme, Select};
 use std::collections::HashMap;
 use std::error::Error;
 use std::process::Command;
-use aws_profile_select::{get_env, parse_profiles};
-use dialoguer::{Select, theme::ColorfulTheme};
 
 fn select_environment(environments: &[String]) -> Option<usize> {
     Select::with_theme(&ColorfulTheme::default())
@@ -49,7 +49,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .environment
                 .clone()
                 .unwrap_or_else(|| "other".to_string());
-            env_map.entry(env_key).or_default().push(profile.name.clone());
+            env_map
+                .entry(env_key)
+                .or_default()
+                .push(profile.name.clone());
         }
 
         let mut environments: Vec<String> = env_map.keys().cloned().collect();
@@ -62,9 +65,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 None => return Ok(()), // ESC at environment level: exit
                 Some(env_idx) => {
                     let env = &environments[env_idx];
-                    let env_profiles = env_map
-                        .get(env)
-                        .expect("environment key must exist in env_map as it was derived from its keys");
+                    let env_profiles = env_map.get(env).expect(
+                        "environment key must exist in env_map as it was derived from its keys",
+                    );
                     match select_profile(env_profiles, &current_aws_profile) {
                         None => continue 'outer, // ESC at profile level: back to environment
                         Some(profile_idx) => break env_profiles[profile_idx].clone(),
@@ -102,7 +105,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             let status = Command::new("aws")
                 .args(["sso", "login", "--profile", &chosen_profile])
                 .status()
-                .map_err(|e| format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"))?;
+                .map_err(|e| {
+                    format!(
+                        "Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"
+                    )
+                })?;
             if !status.success() {
                 return Err(format!(
                     "'aws sso login --profile {}' failed with exit code: {}",
