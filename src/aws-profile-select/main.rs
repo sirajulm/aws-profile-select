@@ -88,17 +88,29 @@ fn main() -> Result<(), Box<dyn Error>> {
         .unwrap_or(false);
 
     if profile_uses_sso {
-        let status = Command::new("aws")
-            .args(["sso", "login", "--profile", &chosen_profile])
+        // Treat any execution failure (e.g. aws not in PATH) as an invalid
+        // session so that the subsequent login attempt surfaces the real error.
+        let session_valid = Command::new("aws")
+            .args(["sts", "get-caller-identity", "--profile", &chosen_profile])
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
             .status()
-            .map_err(|e| format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"))?;
-        if !status.success() {
-            return Err(format!(
-                "'aws sso login --profile {}' failed with exit code: {}",
-                chosen_profile,
-                status.code().unwrap_or(-1)
-            )
-            .into());
+            .map(|s| s.success())
+            .unwrap_or(false);
+
+        if !session_valid {
+            let status = Command::new("aws")
+                .args(["sso", "login", "--profile", &chosen_profile])
+                .status()
+                .map_err(|e| format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}"))?;
+            if !status.success() {
+                return Err(format!(
+                    "'aws sso login --profile {}' failed with exit code: {}",
+                    chosen_profile,
+                    status.code().unwrap_or(-1)
+                )
+                .into());
+            }
         }
     }
 
