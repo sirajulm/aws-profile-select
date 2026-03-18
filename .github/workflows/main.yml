@@ -29,8 +29,22 @@ jobs:
       - name: Build
         run: cargo build --verbose
 
-      - name: Test
-        run: cargo test --verbose
+      - name: Install cargo2junit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo2junit
+
+      - name: Test with JUnit output
+        run: cargo test --verbose -- -Z unstable-options --format json | cargo2junit > test-results.xml
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          files: test-results.xml
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   coverage:
     name: Coverage
