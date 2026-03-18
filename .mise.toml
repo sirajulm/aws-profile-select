@@ -1,5 +1,6 @@
 [tools]
 "cargo:cargo-dist" = "0.31.0"
+"cargo:cargo-llvm-cov" = "latest"
 rust = "1.94.0"
 
 [tasks.build]
@@ -29,6 +30,14 @@ run = "cargo fmt"
 [tasks.fmt-check]
 description = "Check code formatting"
 run = "cargo fmt -- --check"
+
+[tasks.coverage]
+description = "Run tests with coverage report (HTML)"
+run = "cargo llvm-cov --html"
+
+[tasks.coverage-report]
+description = "Run tests with coverage and open the HTML report in the browser"
+run = "cargo llvm-cov --open"
 
 [tasks.dist]
 description = "Build the project for distribution"

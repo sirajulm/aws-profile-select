@@ -1,0 +1,17 @@
+# Clippy lint configuration
+# https://doc.rust-lang.org/clippy/lint_configuration.html
+
+# Minimum Supported Rust Version — keeps lints aligned with the project toolchain
+msrv = "1.94.0"
+
+# Warn when functions exceed this number of lines (default is 100)
+too-many-lines-threshold = 100
+
+# Warn when a function has more than this many arguments
+too-many-arguments-threshold = 5
+
+# Cognitive complexity threshold before clippy warns
+cognitive-complexity-threshold = 30
+
+# Disallowed types — prevent accidental use of types that are easy to misuse
+disallowed-types = []
