@@ -1,0 +1,51 @@
+# Codecov configuration
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+        if_ci_failed: error
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+
+  # Ignore test files and the binary entrypoint from coverage metrics
+  ignore:
+    - "tests/**"
+    - "src/aws-profile-select/main.rs"
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+component_management:
+  individual_components:
+    - component_id: lib
+      name: "Core Library"
+      paths:
+        - "src/lib.rs"
+    - component_id: cli
+      name: "CLI & Shell"
+      paths:
+        - "src/aws-profile-select/cli.rs"
+    - component_id: prompt
+      name: "Interactive Prompt"
+      paths:
+        - "src/aws-profile-select/prompt.rs"
+    - component_id: sso
+      name: "SSO Integration"
+      paths:
+        - "src/aws-profile-select/sso.rs"
+
+flags:
+  unittests:
+    paths:
+      - "src/"
+    carryforward: true
