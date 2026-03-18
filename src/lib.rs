@@ -26,12 +26,7 @@ impl Profile {
 }
 
 pub fn get_env(env_key: &str) -> String {
-    match env::var_os(env_key) {
-        Some(os_str) => os_str.into_string().unwrap_or_else(|os_string| {
-            panic!("Failed to convert OsString to String: {:?}", os_string)
-        }),
-        None => String::new(),
-    }
+    env::var(env_key).unwrap_or_default()
 }
 
 /// Resolves the path to the AWS config file.

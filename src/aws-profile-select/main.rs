@@ -19,6 +19,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     let aws_config_file_str = aws_config_file_path.to_string_lossy();
     let profiles = parse_profiles(&aws_config_file_str)?;
 
+    if profiles.is_empty() {
+        return Err(format!(
+            "No AWS profiles found in {}.\n\
+             Add profiles to your AWS config file or set AWS_CONFIG_FILE to point to a valid config.\n\
+             See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+            aws_config_file_str
+        )
+        .into());
+    }
+
     let current_aws_profile = get_env("AWS_PROFILE");
 
     // Determine the chosen profile: either from --profile or interactively

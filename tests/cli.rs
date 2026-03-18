@@ -161,6 +161,50 @@ region = us-east-1
 }
 
 // ---------------------------------------------------------------------------
+// empty config (no profiles)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn empty_config_file_prints_friendly_error() {
+    let path = common::write_temp_config("aws_ps_cli_empty.ini", "");
+
+    let output = bin()
+        .env("AWS_CONFIG_FILE", path.to_str().unwrap())
+        .output()
+        .expect("failed to run binary");
+
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("No AWS profiles found"),
+        "expected friendly 'No AWS profiles found' message, got: {}",
+        stderr
+    );
+}
+
+#[test]
+fn comments_only_config_file_prints_friendly_error() {
+    let content = "\
+# This is a comment
+; This is also a comment
+";
+    let path = common::write_temp_config("aws_ps_cli_comments_only.ini", content);
+
+    let output = bin()
+        .env("AWS_CONFIG_FILE", path.to_str().unwrap())
+        .output()
+        .expect("failed to run binary");
+
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("No AWS profiles found"),
+        "expected friendly 'No AWS profiles found' message, got: {}",
+        stderr
+    );
+}
+
+// ---------------------------------------------------------------------------
 // unknown flags
 // ---------------------------------------------------------------------------
 
