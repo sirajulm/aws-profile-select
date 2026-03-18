@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/sirajulm/aws-profile-select/compare/v0.6.2...v0.7.0) (2026-03-18)
+
+
+### Features
+
+* add duration and readonly flags ([2ca8547](https://github.com/sirajulm/aws-profile-select/commit/2ca854785b3d837b6df2f0f637f9373825962639))
+
 ## [0.6.2](https://github.com/sirajulm/aws-profile-select/compare/v0.6.1...v0.6.2) (2026-03-18)
 
 
