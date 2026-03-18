@@ -2,6 +2,7 @@ use config::{Config, FileFormat, Source, Value};
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
+use std::path::PathBuf;
 
 pub struct Profile {
     pub name: String,
@@ -30,6 +31,21 @@ pub fn get_env(env_key: &str) -> String {
             panic!("Failed to convert OsString to String: {:?}", os_string)
         }),
         None => String::new(),
+    }
+}
+
+/// Resolves the path to the AWS config file.
+///
+/// Checks `AWS_CONFIG_FILE` first; falls back to `~/.aws/config` using the
+/// `dirs` crate for cross-platform home directory resolution.
+pub fn resolve_config_path() -> Result<PathBuf, Box<dyn Error>> {
+    match env::var("AWS_CONFIG_FILE") {
+        Ok(path) if !path.is_empty() => Ok(PathBuf::from(path)),
+        _ => {
+            let home = dirs::home_dir()
+                .ok_or("Could not determine home directory. Set AWS_CONFIG_FILE or HOME.")?;
+            Ok(home.join(".aws").join("config"))
+        }
     }
 }
 
