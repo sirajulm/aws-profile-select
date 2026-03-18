@@ -1,0 +1,24 @@
+# Changelog
+
+## [0.2.0](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.1.1...aws-profile-select-v0.2.0) (2026-03-18)
+
+
+### Features
+
+* add mise config ([9e3c368](https://github.com/sirajulm/aws-profile-select/commit/9e3c3682b225076abb4ec43ec2c86057fdd654a9))
+* Add profile-select command ([74dfb3e](https://github.com/sirajulm/aws-profile-select/commit/74dfb3ebd0f6fd4abeba031a801a7d1faf5937c6))
+* add release-please and cargo-dist for automated releases with binaries ([711d005](https://github.com/sirajulm/aws-profile-select/commit/711d005145f1393d3a3e4bce2f7c68170a089c19))
+* automated releases via release-please + cargo-dist ([557f4c1](https://github.com/sirajulm/aws-profile-select/commit/557f4c1e9f415aa44f4bd408532d7ad7037d0d9a))
+* ignore release yml in renovate ([898d443](https://github.com/sirajulm/aws-profile-select/commit/898d443750350eda50687a8b6c12ba199ccdaf94))
+
+
+### Bug Fixes
+
+* allow dirty config ([04d585c](https://github.com/sirajulm/aws-profile-select/commit/04d585c79c1687c2e15ca67138a57699f675d1a8))
+* **deps:** update rust crate config to 0.15.0 ([da3e28f](https://github.com/sirajulm/aws-profile-select/commit/da3e28f47449a77981b472b161e0ed609a3ed6b2))
+* **deps:** update rust crate config to 0.15.0 ([6e131a0](https://github.com/sirajulm/aws-profile-select/commit/6e131a087f3cb930002dcd563329b005b4ace1b4))
+* **deps:** update rust crate dialoguer to 0.11.0 ([7b77518](https://github.com/sirajulm/aws-profile-select/commit/7b77518c6e78614a45bb0625ca872b41ac50050b))
+* **deps:** update rust crate dialoguer to 0.11.0 ([31c8755](https://github.com/sirajulm/aws-profile-select/commit/31c87557b669dae4a5a90d9fc4e30c3c37ec829c))
+* **deps:** update rust crate dialoguer to 0.12.0 ([e2e5e56](https://github.com/sirajulm/aws-profile-select/commit/e2e5e560809bdca9b9116ca152765b9bbda336dc))
+* **deps:** update rust crate dialoguer to 0.12.0 ([9e661b9](https://github.com/sirajulm/aws-profile-select/commit/9e661b9bcac6f937e3542010e8d2fc2ab28ddcbb))
+* Remove sso-session ([7347cfd](https://github.com/sirajulm/aws-profile-select/commit/7347cfdb1efa07abd12d52b14a56d585b65d0e61))
