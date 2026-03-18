@@ -1,6 +1,7 @@
 use aws_profile_select::{get_env, parse_profiles};
 use dialoguer::{theme::ColorfulTheme, Select};
 use std::collections::HashMap;
+use std::env;
 use std::error::Error;
 use std::process::Command;
 
@@ -30,12 +31,18 @@ fn select_profile(profiles: &[String], default: &str) -> Option<usize> {
 
 fn main() -> Result<(), Box<dyn Error>> {
     const AWS_PROFILE: &str = "AWS_PROFILE";
-    const HOME: &str = "HOME";
-
-    let home_path = get_env(HOME);
     let current_aws_profile = get_env(AWS_PROFILE);
 
-    let aws_config_file_path = format!("{home_path}/.aws/config");
+    let aws_config_file_path = match env::var("AWS_CONFIG_FILE") {
+        Ok(path) if !path.is_empty() => path,
+        _ => {
+            let home_path = dirs::home_dir()
+                .ok_or("Could not determine home directory. Set AWS_CONFIG_FILE or HOME.")?
+                .to_string_lossy()
+                .into_owned();
+            format!("{home_path}/.aws/config")
+        }
+    };
 
     let profiles = parse_profiles(&aws_config_file_path)?;
 
