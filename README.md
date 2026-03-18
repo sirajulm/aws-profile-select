@@ -2,7 +2,12 @@
 
 Interactive AWS profile selector for the terminal. Switch between AWS profiles with a simple TUI — no more hand-editing `AWS_PROFILE` or remembering profile names.
 
-![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue)
+<p>
+  <img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue" alt="MIT/Apache 2.0">
+  <a href="https://codecov.io/gh/sirajulm/aws-profile-select">
+    <img src="https://codecov.io/gh/sirajulm/aws-profile-select/graph/badge.svg?token=PIJ6BGAYYI" alt="codecov">
+  </a>
+</p>
 
 ## Features
 
