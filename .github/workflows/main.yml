@@ -43,6 +43,8 @@ jobs:
         with:
           files: target/nextest/ci/test-results.xml
           fail_ci_if_error: false
+          override_branch: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          override_commit: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
