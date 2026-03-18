@@ -264,6 +264,8 @@ sso_account_id = 999999999999
 sso_role_name = FullAdmin
 sso_start_url = https://corp.awsapps.com/start
 environment = production
+duration = 8h
+readonly = true
 ";
     let path = common::write_temp_config("aws_ps_full.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
@@ -277,4 +279,164 @@ environment = production
         Some("https://corp.awsapps.com/start".to_string())
     );
     assert!(profiles[0].is_sso());
+    assert_eq!(profiles[0].duration, Some("8h".to_string()));
+    assert!(profiles[0].readonly);
+    assert_eq!(profiles[0].display_name(), "full (8h) (readonly)");
+}
+
+// ---------------------------------------------------------------------------
+// duration field
+// ---------------------------------------------------------------------------
+
+#[test]
+fn reads_duration_field() {
+    let content = "\
+[profile short-lived]
+region = us-east-1
+duration = 1h
+
+[profile long-lived]
+region = us-east-1
+duration = 12h
+";
+    let path = common::write_temp_config("aws_ps_duration.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].name, "long-lived");
+    assert_eq!(profiles[0].duration, Some("12h".to_string()));
+    assert_eq!(profiles[1].name, "short-lived");
+    assert_eq!(profiles[1].duration, Some("1h".to_string()));
+}
+
+#[test]
+fn duration_defaults_to_none() {
+    let content = "\
+[profile no-duration]
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_no_duration.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].duration, None);
+}
+
+// ---------------------------------------------------------------------------
+// readonly field
+// ---------------------------------------------------------------------------
+
+#[test]
+fn reads_readonly_true() {
+    let content = "\
+[profile ro-profile]
+region = us-east-1
+readonly = true
+";
+    let path = common::write_temp_config("aws_ps_readonly_true.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert!(profiles[0].readonly);
+}
+
+#[test]
+fn reads_readonly_false() {
+    let content = "\
+[profile rw-profile]
+region = us-east-1
+readonly = false
+";
+    let path = common::write_temp_config("aws_ps_readonly_false.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert!(!profiles[0].readonly);
+}
+
+#[test]
+fn readonly_defaults_to_false() {
+    let content = "\
+[profile no-readonly]
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_no_readonly.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert!(!profiles[0].readonly);
+}
+
+// ---------------------------------------------------------------------------
+// display_name — integration tests
+// ---------------------------------------------------------------------------
+
+#[test]
+fn display_name_no_annotations() {
+    let content = "\
+[profile plain]
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_display_plain.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].display_name(), "plain");
+}
+
+#[test]
+fn display_name_duration_only() {
+    let content = "\
+[profile timed]
+region = us-east-1
+duration = 8h
+";
+    let path = common::write_temp_config("aws_ps_display_duration.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].display_name(), "timed (8h)");
+}
+
+#[test]
+fn display_name_readonly_only() {
+    let content = "\
+[profile locked]
+region = us-east-1
+readonly = true
+";
+    let path = common::write_temp_config("aws_ps_display_readonly.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].display_name(), "locked (readonly)");
+}
+
+#[test]
+fn display_name_both_annotations() {
+    let content = "\
+[profile annotated]
+region = us-east-1
+duration = 4h
+readonly = true
+";
+    let path = common::write_temp_config("aws_ps_display_both.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    assert_eq!(profiles[0].display_name(), "annotated (4h) (readonly)");
+}
+
+#[test]
+fn mixed_annotated_and_plain_profiles() {
+    let content = "\
+[profile admin]
+region = us-east-1
+duration = 8h
+
+[profile reader]
+region = us-east-1
+readonly = true
+
+[profile basic]
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_display_mixed.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+
+    // sorted alphabetically: admin, basic, reader
+    assert_eq!(profiles[0].display_name(), "admin (8h)");
+    assert_eq!(profiles[1].display_name(), "basic");
+    assert_eq!(profiles[2].display_name(), "reader (readonly)");
 }

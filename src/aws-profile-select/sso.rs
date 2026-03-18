@@ -64,6 +64,8 @@ mod tests {
             environment: None,
             sso_session: None,
             sso_start_url: None,
+            duration: None,
+            readonly: false,
         }
     }
 
@@ -74,6 +76,8 @@ mod tests {
             environment: None,
             sso_session: Some(session.to_string()),
             sso_start_url: None,
+            duration: None,
+            readonly: false,
         }
     }
 
@@ -84,6 +88,8 @@ mod tests {
             environment: None,
             sso_session: None,
             sso_start_url: Some(url.to_string()),
+            duration: None,
+            readonly: false,
         }
     }
 
@@ -148,6 +154,8 @@ mod tests {
             environment: None,
             sso_session: Some("corp".to_string()),
             sso_start_url: Some("https://corp.awsapps.com/start".to_string()),
+            duration: None,
+            readonly: false,
         }];
         assert!(requires_sso_login(&profiles, "full-sso"));
     }
