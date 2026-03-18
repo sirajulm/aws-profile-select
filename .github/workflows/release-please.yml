@@ -13,41 +13,22 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      # By using a PAT instead of GITHUB_TOKEN, the tag created by
+      # release-please will trigger other workflows (e.g. cargo-dist's
+      # release.yml which runs on push tags).
       - uses: googleapis/release-please-action@v4
         id: release
         with:
+          token: ${{ secrets.GK_TOKEN_PAT }}
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
 
-      # release-please creates both a GitHub Release and a tag.
-      # cargo-dist also creates a GitHub Release when it sees the tag.
-      # To avoid conflict, delete the release-please release but keep the tag.
-      # cargo-dist will then create its own release with binaries attached.
+      # cargo-dist creates its own GitHub Release with binaries attached.
+      # Delete the release-please one to avoid a duplicate, but keep the tag.
       - name: Delete release-please GitHub Release (keep tag for cargo-dist)
         if: ${{ steps.release.outputs.release_created == 'true' }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GK_TOKEN_PAT }}
         run: |
           gh release delete "${{ steps.release.outputs.tag_name }}" --repo "${{ github.repository }}" --yes --cleanup-tag=false
-
-      # Tags created by GITHUB_TOKEN don't trigger other workflows.
-      # Re-push the tag using a PAT so the push event fires and
-      # cargo-dist's release.yml (on: push: tags) picks it up.
-      - name: Checkout repo
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: actions/checkout@v6
-        with:
-          fetch-tags: true
-
-      - name: Re-push tag to trigger cargo-dist
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        env:
-          TAG_NAME: ${{ steps.release.outputs.tag_name }}
-        run: |
-          REMOTE_URL="https://x-access-token:${{ secrets.GK_TOKEN_PAT }}@github.com/${{ github.repository }}.git"
-          git fetch "${REMOTE_URL}" "refs/tags/${TAG_NAME}:refs/tags/${TAG_NAME}"
-          git push --force "${REMOTE_URL}" "refs/tags/${TAG_NAME}"
