@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/sirajulm/aws-profile-select/compare/v0.5.0...v0.6.0) (2026-03-18)
+
+
+### Features
+
+* add codecov Test analytics ([36455b9](https://github.com/sirajulm/aws-profile-select/commit/36455b9c4a4de31a977116fa110933c537be4a3f))
+
+
+### Bug Fixes
+
+* switch to nextest ([5f6104e](https://github.com/sirajulm/aws-profile-select/commit/5f6104e9f2601c2e64a1ad737415b7f86a5da21e))
+
 ## [0.5.0](https://github.com/sirajulm/aws-profile-select/compare/v0.4.0...v0.5.0) (2026-03-18)
 
 
