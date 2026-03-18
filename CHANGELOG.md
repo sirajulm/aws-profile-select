@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/sirajulm/aws-profile-select/compare/v0.6.1...v0.6.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* codecov token ([6157449](https://github.com/sirajulm/aws-profile-select/commit/6157449fd752192127d218d9681540474e8e77d3))
+
 ## [0.6.1](https://github.com/sirajulm/aws-profile-select/compare/v0.6.0...v0.6.1) (2026-03-18)
 
 
