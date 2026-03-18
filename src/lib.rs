@@ -1,7 +1,7 @@
+use config::{Config, FileFormat, Source, Value};
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
-use config::{Config, FileFormat, Source, Value};
 
 pub struct Profile {
     pub name: String,
@@ -61,7 +61,12 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
                     (environment, sso_session, sso_start_url)
                 })
                 .unwrap_or((None, None, None));
-            Profile { name, environment, sso_session, sso_start_url }
+            Profile {
+                name,
+                environment,
+                sso_session,
+                sso_start_url,
+            }
         })
         .collect();
 

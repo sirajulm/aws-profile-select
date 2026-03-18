@@ -2,6 +2,9 @@
 name = "aws-profile-select"
 version = "0.1.1"
 edition = "2021"
+description = "Interactive AWS profile selector for the terminal"
+repository = "https://github.com/sirajulm/aws-profile-select"
+license = "MIT OR Apache-2.0"
 
 [lib]
 name = "aws_profile_select"
@@ -16,3 +19,8 @@ path = "src/aws-profile-select/main.rs"
 [dependencies]
 config = "0.15.0"
 dialoguer = "0.12.0"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
