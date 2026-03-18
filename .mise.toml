@@ -1,0 +1,35 @@
+[tools]
+"cargo:cargo-dist" = "0.31.0"
+rust = "1.94.0"
+
+[tasks.build]
+description = "Build the project"
+run = "cargo build"
+
+[tasks.release]
+description = "Build the project in release mode"
+run = "cargo build --release"
+
+[tasks.install]
+description = "Install the binary to ~/.cargo/bin"
+run = "cargo install --path . --force"
+
+[tasks.test]
+description = "Run tests"
+run = "cargo test"
+
+[tasks.lint]
+description = "Run clippy lints"
+run = "cargo clippy -- -D warnings"
+
+[tasks.fmt]
+description = "Format code"
+run = "cargo fmt"
+
+[tasks.fmt-check]
+description = "Check code formatting"
+run = "cargo fmt -- --check"
+
+[tasks.dist]
+description = "Build the project for distribution"
+run = "dist"
