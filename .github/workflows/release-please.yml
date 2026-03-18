@@ -13,8 +13,23 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
+
+      # release-please creates both a GitHub Release and a tag.
+      # cargo-dist also creates a GitHub Release when it sees the tag.
+      # To avoid conflict, delete the release-please release but keep the tag.
+      # cargo-dist will then create its own release with binaries attached.
+      - name: Delete release-please GitHub Release (keep tag for cargo-dist)
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete "${{ steps.release.outputs.tag_name }}" --repo "${{ github.repository }}" --yes --cleanup-tag=false

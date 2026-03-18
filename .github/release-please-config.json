@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "rust",
-      "skip-github-release": true
+      "include-v-in-tag": true
     }
   }
 }
