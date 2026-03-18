@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.2.0...aws-profile-select-v0.2.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* app release workflow ([362cb39](https://github.com/sirajulm/aws-profile-select/commit/362cb390fd6f22a4f8bc6248148d1bf44fe4c034))
+
 ## [0.2.0](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.1.1...aws-profile-select-v0.2.0) (2026-03-18)
 
 
