@@ -89,3 +89,74 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
     profiles.sort_by(|a, b| a.name.cmp(&b.name));
     Ok(profiles)
 }
+
+/*
+ * Unit tests
+ */
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serial_test::serial;
+
+    // -----------------------------------------------------------------------
+    // get_env
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[serial]
+    fn get_env_returns_value() {
+        env::set_var("AWS_PS_TEST_VAR", "hello");
+        assert_eq!(get_env("AWS_PS_TEST_VAR"), "hello");
+        env::remove_var("AWS_PS_TEST_VAR");
+    }
+
+    #[test]
+    #[serial]
+    fn get_env_returns_empty_when_missing() {
+        env::remove_var("AWS_PS_TEST_MISSING");
+        assert_eq!(get_env("AWS_PS_TEST_MISSING"), "");
+    }
+
+    #[test]
+    #[serial]
+    fn get_env_returns_empty_when_value_is_empty() {
+        env::set_var("AWS_PS_TEST_EMPTY", "");
+        assert_eq!(get_env("AWS_PS_TEST_EMPTY"), "");
+        env::remove_var("AWS_PS_TEST_EMPTY");
+    }
+
+    // -----------------------------------------------------------------------
+    // resolve_config_path
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[serial]
+    fn resolve_config_path_uses_aws_config_file_when_set() {
+        env::set_var("AWS_CONFIG_FILE", "/custom/path/config");
+        let path = resolve_config_path().unwrap();
+        assert_eq!(path, PathBuf::from("/custom/path/config"));
+        env::remove_var("AWS_CONFIG_FILE");
+    }
+
+    #[test]
+    #[serial]
+    fn resolve_config_path_ignores_empty_aws_config_file() {
+        env::set_var("AWS_CONFIG_FILE", "");
+        let path = resolve_config_path().unwrap();
+        assert!(
+            path.ends_with(".aws/config"),
+            "expected fallback to ~/.aws/config, got: {:?}",
+            path
+        );
+        env::remove_var("AWS_CONFIG_FILE");
+    }
+
+    #[test]
+    #[serial]
+    fn resolve_config_path_falls_back_to_home_aws_config() {
+        env::remove_var("AWS_CONFIG_FILE");
+        let path = resolve_config_path().unwrap();
+        let home = dirs::home_dir().expect("home dir should resolve in test");
+        assert_eq!(path, home.join(".aws").join("config"));
+    }
+}
