@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.2.4...aws-profile-select-v0.3.0) (2026-03-18)
+
+
+### Features
+
+* modularize code ([577a240](https://github.com/sirajulm/aws-profile-select/commit/577a240d537f6fe09a6e37111a97efa9489030aa))
+* respect AWS_CONFIG_FILE if exists ([4965f05](https://github.com/sirajulm/aws-profile-select/commit/4965f0542a11cd89b8fd38a2dae18f73f2bae936))
+
+
+### Bug Fixes
+
+* lint issues ([45c3f8e](https://github.com/sirajulm/aws-profile-select/commit/45c3f8e62916a95a8be166b863f53e64fc690ad3))
+
 ## [0.2.4](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.2.3...aws-profile-select-v0.2.4) (2026-03-18)
 
 
