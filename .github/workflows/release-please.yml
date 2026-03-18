@@ -37,14 +37,17 @@ jobs:
       # Tags created by GITHUB_TOKEN don't trigger other workflows.
       # Re-push the tag using a PAT so the push event fires and
       # cargo-dist's release.yml (on: push: tags) picks it up.
+      - name: Checkout repo
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: actions/checkout@v6
+        with:
+          fetch-tags: true
+
       - name: Re-push tag to trigger cargo-dist
         if: ${{ steps.release.outputs.release_created == 'true' }}
         env:
           TAG_NAME: ${{ steps.release.outputs.tag_name }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           REMOTE_URL="https://x-access-token:${{ secrets.GK_TOKEN_PAT }}@github.com/${{ github.repository }}.git"
-          git tag -d "${TAG_NAME}"
           git fetch "${REMOTE_URL}" "refs/tags/${TAG_NAME}:refs/tags/${TAG_NAME}"
           git push --force "${REMOTE_URL}" "refs/tags/${TAG_NAME}"
