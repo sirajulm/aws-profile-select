@@ -16,20 +16,21 @@ Interactive AWS profile selector for the terminal. Switch between AWS profiles w
 - **SSO support** — automatically detects SSO profiles and triggers `aws sso login` when the session has expired
 - **Shell integration** — provides an `asp` shell function that sets `AWS_PROFILE` in your current session
 - **Direct profile flag** — skip interactive mode with `--profile <name>` for scripting and automation
+- **Profile annotations** — annotate profiles with `duration` and `readonly` fields, displayed as `profile (8h) (readonly)` in the selector
 - **Respects `AWS_CONFIG_FILE`** — works with custom config file locations
 
 ## Installation
+
+### Using mise
+
+```sh
+mise use -g github:sirajulm/aws-profile-select
+```
 
 ### From source
 
 ```sh
 cargo install --path .
-```
-
-### Using mise
-
-```sh
-mise run install
 ```
 
 ### Pre-built binaries
@@ -151,6 +152,42 @@ sso_account_id = 123456789012
 sso_role_name = DevAccess
 region = us-east-1
 ```
+
+### With duration and readonly annotations
+
+Add `duration` and `readonly` fields to display extra context in the interactive selector. These are custom fields used only by `aws-profile-select` — they don't affect AWS CLI behaviour.
+
+```ini
+[profile prod-admin]
+region = eu-west-1
+environment = production
+duration = 8h
+readonly = false
+
+[profile prod-readonly]
+region = eu-west-1
+environment = production
+duration = 4h
+readonly = true
+
+[profile dev-admin]
+region = us-east-1
+environment = development
+duration = 1h
+```
+
+In the selector, these render as:
+
+```
+prod-admin (8h)
+prod-readonly (4h) (readonly)
+dev-admin (1h)
+```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `duration` | string | _(none)_ | Session duration hint, e.g. `1h`, `8h`, `30m` — displayed in brackets |
+| `readonly` | `true` / `false` | `false` | Whether the profile is read-only — shows `(readonly)` when `true` |
 
 ## Development
 
