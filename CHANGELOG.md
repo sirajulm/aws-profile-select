@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.2.2...aws-profile-select-v0.2.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* git release flow ([c23d36e](https://github.com/sirajulm/aws-profile-select/commit/c23d36e672ceb87f0798cc3c6af46e13a705c7da))
+
 ## [0.2.2](https://github.com/sirajulm/aws-profile-select/compare/aws-profile-select-v0.2.1...aws-profile-select-v0.2.2) (2026-03-18)
 
 
