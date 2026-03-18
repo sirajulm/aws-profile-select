@@ -67,9 +67,6 @@ pub fn run_interactive(profiles: &[Profile], current_aws_profile: &str) -> Optio
     } else {
         // No environment fields present: single-level selection (original behaviour).
         let profile_names: Vec<String> = profiles.iter().map(|p| p.name.clone()).collect();
-        match select_profile(&profile_names, current_aws_profile) {
-            None => None,
-            Some(idx) => Some(profile_names[idx].clone()),
-        }
+        select_profile(&profile_names, current_aws_profile).map(|idx| profile_names[idx].clone())
     }
 }
