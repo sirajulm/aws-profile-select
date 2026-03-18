@@ -109,7 +109,7 @@ mod tests {
             sso_session: None,
             sso_start_url: None,
             duration: None,
-            readonly: false,
+            readonly: None,
         }
     }
 
@@ -267,7 +267,7 @@ mod tests {
             sso_session: None,
             sso_start_url: None,
             duration: Some("8h".to_string()),
-            readonly: false,
+            readonly: None,
         }];
         let map = build_env_map(&profiles);
 
@@ -285,13 +285,13 @@ mod tests {
             sso_session: None,
             sso_start_url: None,
             duration: None,
-            readonly: true,
+            readonly: Some(true),
         }];
         let map = build_env_map(&profiles);
 
         assert_eq!(
             map.get("production").unwrap(),
-            &vec![("prod (readonly)".to_string(), "prod".to_string())]
+            &vec![("prod 👀".to_string(), "prod".to_string())]
         );
     }
 
@@ -303,13 +303,13 @@ mod tests {
             sso_session: None,
             sso_start_url: None,
             duration: Some("1h".to_string()),
-            readonly: true,
+            readonly: Some(true),
         }];
         let map = build_env_map(&profiles);
 
         assert_eq!(
             map.get("staging").unwrap(),
-            &vec![("staging (1h) (readonly)".to_string(), "staging".to_string())]
+            &vec![("staging (1h) 👀".to_string(), "staging".to_string())]
         );
     }
 }

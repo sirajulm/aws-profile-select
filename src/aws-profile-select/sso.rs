@@ -65,7 +65,7 @@ mod tests {
             sso_session: None,
             sso_start_url: None,
             duration: None,
-            readonly: false,
+            readonly: None,
         }
     }
 
@@ -77,7 +77,7 @@ mod tests {
             sso_session: Some(session.to_string()),
             sso_start_url: None,
             duration: None,
-            readonly: false,
+            readonly: None,
         }
     }
 
@@ -89,7 +89,7 @@ mod tests {
             sso_session: None,
             sso_start_url: Some(url.to_string()),
             duration: None,
-            readonly: false,
+            readonly: None,
         }
     }
 
@@ -155,7 +155,7 @@ mod tests {
             sso_session: Some("corp".to_string()),
             sso_start_url: Some("https://corp.awsapps.com/start".to_string()),
             duration: None,
-            readonly: false,
+            readonly: None,
         }];
         assert!(requires_sso_login(&profiles, "full-sso"));
     }

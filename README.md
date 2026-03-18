@@ -16,7 +16,7 @@ Interactive AWS profile selector for the terminal. Switch between AWS profiles w
 - **SSO support** — automatically detects SSO profiles and triggers `aws sso login` when the session has expired
 - **Shell integration** — provides an `asp` shell function that sets `AWS_PROFILE` in your current session
 - **Direct profile flag** — skip interactive mode with `--profile <name>` for scripting and automation
-- **Profile annotations** — annotate profiles with `duration` and `readonly` fields, displayed as `profile (8h) (readonly)` in the selector
+- **Profile annotations** — annotate profiles with `duration` and `readonly` fields, displayed as `profile (8h) 🔥` or `profile 👀` in the selector
 - **Respects `AWS_CONFIG_FILE`** — works with custom config file locations
 
 ## Installation
@@ -179,15 +179,15 @@ duration = 1h
 In the selector, these render as:
 
 ```
-prod-admin (8h)
-prod-readonly (4h) (readonly)
+prod-admin (8h) 🔥
+prod-readonly (4h) 👀
 dev-admin (1h)
 ```
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `duration` | string | _(none)_ | Session duration hint, e.g. `1h`, `8h`, `30m` — displayed in brackets |
-| `readonly` | `true` / `false` | `false` | Whether the profile is read-only — shows `(readonly)` when `true` |
+| `readonly` | `true` / `false` | _(none)_ | 👀 when `true`, 🔥 when `false` — no icon when field is absent |
 
 ## Development
 

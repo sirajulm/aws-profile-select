@@ -10,7 +10,7 @@ pub struct Profile {
     pub sso_session: Option<String>,
     pub sso_start_url: Option<String>,
     pub duration: Option<String>,
-    pub readonly: bool,
+    pub readonly: Option<bool>,
 }
 
 impl Profile {
@@ -26,14 +26,23 @@ impl Profile {
         self.sso_session.is_some() || self.sso_start_url.is_some()
     }
 
-    /// Returns the profile name with optional annotations in brackets.
+    /// Returns the profile name with optional annotations.
+    ///
+    /// Examples:
+    /// - `"dev"` — no annotations
+    /// - `"dev (8h)"` — duration only
+    /// - `"dev (8h) 🔥"` — writable with duration
+    /// - `"prod (4h) 👀"` — readonly with duration
+    /// - `"prod 👀"` — readonly, no duration
     pub fn display_name(&self) -> String {
         let mut display = self.name.clone();
         if let Some(ref dur) = self.duration {
             display.push_str(&format!(" ({dur})"));
         }
-        if self.readonly {
-            display.push_str(" (readonly)");
+        match self.readonly {
+            Some(true) => display.push_str(" 👀"),
+            Some(false) => display.push_str(" 🔥"),
+            None => {}
         }
         display
     }
@@ -89,11 +98,10 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
                     let readonly = table
                         .get("readonly")
                         .and_then(|v| v.clone().into_string().ok())
-                        .map(|v| v == "true")
-                        .unwrap_or(false);
+                        .map(|v| v == "true");
                     (environment, sso_session, sso_start_url, duration, readonly)
                 })
-                .unwrap_or((None, None, None, None, false));
+                .unwrap_or((None, None, None, None, None));
             Profile {
                 name,
                 environment,
@@ -188,7 +196,7 @@ mod tests {
         sso_session: Option<&str>,
         sso_start_url: Option<&str>,
         duration: Option<&str>,
-        readonly: bool,
+        readonly: Option<bool>,
     ) -> Profile {
         Profile {
             name: name.to_string(),
@@ -206,7 +214,7 @@ mod tests {
 
     #[test]
     fn display_name_plain_profile() {
-        let p = make_profile("dev", None, None, None, false);
+        let p = make_profile("dev", None, None, None, None);
         assert_eq!(p.display_name(), "dev");
     }
 
@@ -216,8 +224,14 @@ mod tests {
 
     #[test]
     fn display_name_with_duration() {
-        let p = make_profile("dev", None, None, Some("8h"), false);
+        let p = make_profile("dev", None, None, Some("8h"), None);
         assert_eq!(p.display_name(), "dev (8h)");
+    }
+
+    #[test]
+    fn display_name_with_duration_and_writable() {
+        let p = make_profile("dev", None, None, Some("8h"), Some(false));
+        assert_eq!(p.display_name(), "dev (8h) 🔥");
     }
 
     // -----------------------------------------------------------------------
@@ -226,13 +240,19 @@ mod tests {
 
     #[test]
     fn display_name_with_readonly() {
-        let p = make_profile("prod", None, None, None, true);
-        assert_eq!(p.display_name(), "prod (readonly)");
+        let p = make_profile("prod", None, None, None, Some(true));
+        assert_eq!(p.display_name(), "prod 👀");
     }
 
     #[test]
-    fn display_name_not_readonly() {
-        let p = make_profile("prod", None, None, None, false);
+    fn display_name_with_writable() {
+        let p = make_profile("prod", None, None, None, Some(false));
+        assert_eq!(p.display_name(), "prod 🔥");
+    }
+
+    #[test]
+    fn display_name_readonly_absent() {
+        let p = make_profile("prod", None, None, None, None);
         assert_eq!(p.display_name(), "prod");
     }
 
@@ -242,8 +262,14 @@ mod tests {
 
     #[test]
     fn display_name_with_duration_and_readonly() {
-        let p = make_profile("staging", None, None, Some("8h"), true);
-        assert_eq!(p.display_name(), "staging (8h) (readonly)");
+        let p = make_profile("staging", None, None, Some("8h"), Some(true));
+        assert_eq!(p.display_name(), "staging (8h) 👀");
+    }
+
+    #[test]
+    fn display_name_with_short_duration_and_readonly() {
+        let p = make_profile("staging", None, None, Some("1h"), Some(true));
+        assert_eq!(p.display_name(), "staging (1h) 👀");
     }
 
     // -----------------------------------------------------------------------
@@ -252,20 +278,26 @@ mod tests {
 
     #[test]
     fn display_name_with_sso_and_duration() {
-        let p = make_profile("sso-dev", Some("my-sso"), None, Some("4h"), false);
+        let p = make_profile("sso-dev", Some("my-sso"), None, Some("4h"), Some(false));
+        assert_eq!(p.display_name(), "sso-dev (4h) 🔥");
+    }
+
+    #[test]
+    fn display_name_with_sso_and_duration_no_readonly() {
+        let p = make_profile("sso-dev", Some("my-sso"), None, Some("4h"), None);
         assert_eq!(p.display_name(), "sso-dev (4h)");
     }
 
     #[test]
     fn display_name_with_sso_and_readonly() {
-        let p = make_profile("sso-prod", Some("corp"), None, None, true);
-        assert_eq!(p.display_name(), "sso-prod (readonly)");
+        let p = make_profile("sso-prod", Some("corp"), None, None, Some(true));
+        assert_eq!(p.display_name(), "sso-prod 👀");
     }
 
     #[test]
     fn display_name_with_sso_duration_and_readonly() {
-        let p = make_profile("sso-prod", Some("corp"), None, Some("2h"), true);
-        assert_eq!(p.display_name(), "sso-prod (2h) (readonly)");
+        let p = make_profile("sso-prod", Some("corp"), None, Some("2h"), Some(true));
+        assert_eq!(p.display_name(), "sso-prod (2h) 👀");
     }
 
     // -----------------------------------------------------------------------
@@ -274,13 +306,13 @@ mod tests {
 
     #[test]
     fn is_sso_false_when_no_sso_fields() {
-        let p = make_profile("dev", None, None, None, false);
+        let p = make_profile("dev", None, None, None, None);
         assert!(!p.is_sso());
     }
 
     #[test]
     fn is_sso_true_with_sso_session() {
-        let p = make_profile("sso-dev", Some("my-sso"), None, None, false);
+        let p = make_profile("sso-dev", Some("my-sso"), None, None, None);
         assert!(p.is_sso());
     }
 
@@ -291,7 +323,7 @@ mod tests {
             None,
             Some("https://example.awsapps.com/start"),
             None,
-            false,
+            None,
         );
         assert!(p.is_sso());
     }
@@ -303,7 +335,7 @@ mod tests {
             Some("corp"),
             Some("https://corp.awsapps.com/start"),
             None,
-            false,
+            None,
         );
         assert!(p.is_sso());
     }
@@ -314,13 +346,13 @@ mod tests {
 
     #[test]
     fn is_sso_false_with_duration_and_readonly_but_no_sso() {
-        let p = make_profile("dev", None, None, Some("8h"), true);
+        let p = make_profile("dev", None, None, Some("8h"), Some(true));
         assert!(!p.is_sso());
     }
 
     #[test]
     fn is_sso_true_with_sso_session_and_annotations() {
-        let p = make_profile("sso-dev", Some("my-sso"), None, Some("4h"), true);
+        let p = make_profile("sso-dev", Some("my-sso"), None, Some("4h"), Some(true));
         assert!(p.is_sso());
     }
 }

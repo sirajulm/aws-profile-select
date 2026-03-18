@@ -280,8 +280,8 @@ readonly = true
     );
     assert!(profiles[0].is_sso());
     assert_eq!(profiles[0].duration, Some("8h".to_string()));
-    assert!(profiles[0].readonly);
-    assert_eq!(profiles[0].display_name(), "full (8h) (readonly)");
+    assert_eq!(profiles[0].readonly, Some(true));
+    assert_eq!(profiles[0].display_name(), "full (8h) 👀");
 }
 
 // ---------------------------------------------------------------------------
@@ -334,7 +334,7 @@ readonly = true
     let path = common::write_temp_config("aws_ps_readonly_true.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
 
-    assert!(profiles[0].readonly);
+    assert_eq!(profiles[0].readonly, Some(true));
 }
 
 #[test]
@@ -347,11 +347,11 @@ readonly = false
     let path = common::write_temp_config("aws_ps_readonly_false.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
 
-    assert!(!profiles[0].readonly);
+    assert_eq!(profiles[0].readonly, Some(false));
 }
 
 #[test]
-fn readonly_defaults_to_false() {
+fn readonly_defaults_to_none() {
     let content = "\
 [profile no-readonly]
 region = us-east-1
@@ -359,7 +359,7 @@ region = us-east-1
     let path = common::write_temp_config("aws_ps_no_readonly.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
 
-    assert!(!profiles[0].readonly);
+    assert_eq!(profiles[0].readonly, None);
 }
 
 // ---------------------------------------------------------------------------
@@ -401,7 +401,7 @@ readonly = true
     let path = common::write_temp_config("aws_ps_display_readonly.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
 
-    assert_eq!(profiles[0].display_name(), "locked (readonly)");
+    assert_eq!(profiles[0].display_name(), "locked 👀");
 }
 
 #[test]
@@ -415,7 +415,7 @@ readonly = true
     let path = common::write_temp_config("aws_ps_display_both.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
 
-    assert_eq!(profiles[0].display_name(), "annotated (4h) (readonly)");
+    assert_eq!(profiles[0].display_name(), "annotated (4h) 👀");
 }
 
 #[test]
@@ -438,5 +438,5 @@ region = us-east-1
     // sorted alphabetically: admin, basic, reader
     assert_eq!(profiles[0].display_name(), "admin (8h)");
     assert_eq!(profiles[1].display_name(), "basic");
-    assert_eq!(profiles[2].display_name(), "reader (readonly)");
+    assert_eq!(profiles[2].display_name(), "reader 👀");
 }
