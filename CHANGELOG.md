@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/sirajulm/aws-profile-select/compare/v0.6.0...v0.6.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* branch issue with codecov ([f124ad3](https://github.com/sirajulm/aws-profile-select/commit/f124ad30d31fc1c1a60c64b803e2a49e3ab1e164))
+
 ## [0.6.0](https://github.com/sirajulm/aws-profile-select/compare/v0.5.0...v0.6.0) (2026-03-18)
 
 
