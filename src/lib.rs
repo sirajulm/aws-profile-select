@@ -9,6 +9,7 @@ pub struct Profile {
     pub environment: Option<String>,
     pub sso_session: Option<String>,
     pub sso_start_url: Option<String>,
+    pub source_profile: Option<String>,
     pub duration: Option<String>,
     pub readonly: Option<bool>,
 }
@@ -79,34 +80,46 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
         .filter(|(key, _)| !key.contains("sso-session"))
         .map(|(key, value)| {
             let name = key.replace("profile ", "");
-            let (environment, sso_session, sso_start_url, duration, readonly) = value
-                .into_table()
-                .ok()
-                .map(|table| {
-                    let environment = table
-                        .get("environment")
-                        .and_then(|v| v.clone().into_string().ok());
-                    let sso_session = table
-                        .get("sso_session")
-                        .and_then(|v| v.clone().into_string().ok());
-                    let sso_start_url = table
-                        .get("sso_start_url")
-                        .and_then(|v| v.clone().into_string().ok());
-                    let duration = table
-                        .get("duration")
-                        .and_then(|v| v.clone().into_string().ok());
-                    let readonly = table
-                        .get("readonly")
-                        .and_then(|v| v.clone().into_string().ok())
-                        .map(|v| v == "true");
-                    (environment, sso_session, sso_start_url, duration, readonly)
-                })
-                .unwrap_or((None, None, None, None, None));
+            let (environment, sso_session, sso_start_url, source_profile, duration, readonly) =
+                value
+                    .into_table()
+                    .ok()
+                    .map(|table| {
+                        let environment = table
+                            .get("environment")
+                            .and_then(|v| v.clone().into_string().ok());
+                        let sso_session = table
+                            .get("sso_session")
+                            .and_then(|v| v.clone().into_string().ok());
+                        let sso_start_url = table
+                            .get("sso_start_url")
+                            .and_then(|v| v.clone().into_string().ok());
+                        let source_profile = table
+                            .get("source_profile")
+                            .and_then(|v| v.clone().into_string().ok());
+                        let duration = table
+                            .get("duration")
+                            .and_then(|v| v.clone().into_string().ok());
+                        let readonly = table
+                            .get("readonly")
+                            .and_then(|v| v.clone().into_string().ok())
+                            .map(|v| v == "true");
+                        (
+                            environment,
+                            sso_session,
+                            sso_start_url,
+                            source_profile,
+                            duration,
+                            readonly,
+                        )
+                    })
+                    .unwrap_or((None, None, None, None, None, None));
             Profile {
                 name,
                 environment,
                 sso_session,
                 sso_start_url,
+                source_profile,
                 duration,
                 readonly,
             }
@@ -203,6 +216,7 @@ mod tests {
             environment: None,
             sso_session: sso_session.map(|s| s.to_string()),
             sso_start_url: sso_start_url.map(|s| s.to_string()),
+            source_profile: None,
             duration: duration.map(|s| s.to_string()),
             readonly,
         }
