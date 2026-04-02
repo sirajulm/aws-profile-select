@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/sirajulm/aws-profile-select/compare/v0.8.0...v0.9.0) (2026-04-02)
+
+
+### Features
+
+* support assumed profiles ([#37](https://github.com/sirajulm/aws-profile-select/issues/37)) ([43d7888](https://github.com/sirajulm/aws-profile-select/commit/43d788873ebf6f8bfb9c3187a2db7fa8e0212695))
+
 ## [0.8.0](https://github.com/sirajulm/aws-profile-select/compare/v0.7.0...v0.8.0) (2026-03-18)
 
 
