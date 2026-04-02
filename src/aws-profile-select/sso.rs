@@ -11,11 +11,11 @@ use std::process::{Command, Stdio};
 ///   that `aws sso login` refreshes the correct session.
 fn sso_login_profile<'a>(profiles: &'a [Profile], chosen_profile: &str) -> Option<&'a str> {
     let profile = profiles.iter().find(|p| p.name == chosen_profile)?;
- 
+
     if profile.is_sso() {
         return Some(&profile.name);
     }
- 
+
     // Assume-role profile: follow source_profile to find an SSO source.
     if let Some(ref source_name) = profile.source_profile {
         let source = profiles.iter().find(|p| p.name == *source_name)?;
@@ -23,14 +23,13 @@ fn sso_login_profile<'a>(profiles: &'a [Profile], chosen_profile: &str) -> Optio
             return Some(&source.name);
         }
     }
- 
+
     None
 }
 
 /// If the chosen profile requires SSO (directly or via an assume-role chain),
 /// validates the current session and triggers `aws sso login` when necessary.
 pub fn handle_sso_login(profiles: &[Profile], chosen_profile: &str) -> Result<(), Box<dyn Error>> {
-    
     let login_profile = match sso_login_profile(profiles, chosen_profile) {
         Some(name) => name,
         None => return Ok(()),
@@ -144,7 +143,7 @@ mod tests {
     #[test]
     fn none_when_profile_not_found() {
         let profiles = vec![iam_profile("dev")];
-         assert!(sso_login_profile(&profiles, "prod").is_none());
+        assert!(sso_login_profile(&profiles, "prod").is_none());
     }
 
     #[test]
@@ -199,22 +198,16 @@ mod tests {
             sso_session_profile("app.admin", "corp-sso"),
             assume_role_profile("mongodb-prod", "app.admin"),
         ];
-        assert_eq!(
-            sso_login_profile(&profiles, "mongodb-prod"),
-            Some("app.admin")
-        );
+        assert_eq!(sso_login_profile(&profiles, "mongodb-prod"),Some("app.admin"));
     }
- 
+
     #[test]
     fn returns_source_name_for_assume_role_with_legacy_sso_source() {
         let profiles = vec![
             sso_url_profile("base-sso", "https://corp.awsapps.com/start"),
             assume_role_profile("prod-role", "base-sso"),
         ];
-        assert_eq!(
-            sso_login_profile(&profiles, "prod-role"),
-            Some("base-sso")
-        );
+        assert_eq!(sso_login_profile(&profiles, "prod-role"),Some("base-sso"));
     }
  
     #[test]
@@ -225,7 +218,7 @@ mod tests {
         ];
         assert!(sso_login_profile(&profiles, "mongodb-prod").is_none());
     }
- 
+
     #[test]
     fn none_for_assume_role_with_missing_source() {
         let profiles = vec![assume_role_profile("mongodb-prod", "nonexistent")];
@@ -235,7 +228,6 @@ mod tests {
     // -----------------------------------------------------------------------
     // sso_login_profile — mixed list
     // -----------------------------------------------------------------------
-
     #[test]
     fn identifies_sso_profile_in_mixed_list() {
         let profiles = vec![
@@ -245,10 +237,7 @@ mod tests {
         ];
 
         assert!(sso_login_profile(&profiles, "iam-admin").is_none());
-        assert_eq!(
-            sso_login_profile(&profiles, "sso-prod"),
-            Some("sso-prod")
-        );
+        assert_eq!(sso_login_profile(&profiles, "sso-prod"),Some("sso-prod"));
         assert!(sso_login_profile(&profiles, "iam-readonly").is_none());
     }
 

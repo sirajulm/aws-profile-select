@@ -104,7 +104,14 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
                             .get("readonly")
                             .and_then(|v| v.clone().into_string().ok())
                             .map(|v| v == "true");
-                        (environment, sso_session, sso_start_url, source_profile, duration, readonly)
+                        (
+                            environment,
+                            sso_session,
+                            sso_start_url,
+                            source_profile,
+                            duration,
+                            readonly
+                        )
                     })
                     .unwrap_or((None, None, None, None, None, None));
             Profile {

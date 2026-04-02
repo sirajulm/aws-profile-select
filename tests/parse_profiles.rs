@@ -444,7 +444,6 @@ region = us-east-1
 // ---------------------------------------------------------------------------
 // source_profile / assume-role profiles
 // ---------------------------------------------------------------------------
- 
 #[test]
 fn reads_source_profile_field() {
     let content = "\
@@ -461,12 +460,10 @@ region = us-east-1
 ";
     let path = common::write_temp_config("aws_ps_assume_role.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
- 
     // sorted: app.admin, mongodb-prod
     assert_eq!(profiles[0].name, "app.admin");
     assert_eq!(profiles[0].source_profile, None);
     assert!(profiles[0].is_sso());
- 
     assert_eq!(profiles[1].name, "mongodb-prod");
     assert_eq!(
         profiles[1].source_profile,
@@ -483,6 +480,5 @@ region = us-east-1
 ";
     let path = common::write_temp_config("aws_ps_no_source_profile.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
- 
     assert_eq!(profiles[0].source_profile, None);
 }
