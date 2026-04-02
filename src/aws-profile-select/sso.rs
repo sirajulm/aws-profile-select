@@ -210,7 +210,7 @@ mod tests {
             sso_url_profile("base-sso", "https://corp.awsapps.com/start"),
             assume_role_profile("prod-role", "base-sso"),
         ];
-        assert_eq!(sso_login_profile(&profiles, "prod-role"),Some("base-sso"));
+        assert_eq!(sso_login_profile(&profiles, "prod-role"), Some("base-sso"));
     }
 
     #[test]
