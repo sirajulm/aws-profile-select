@@ -440,3 +440,49 @@ region = us-east-1
     assert_eq!(profiles[1].display_name(), "basic");
     assert_eq!(profiles[2].display_name(), "reader 👀");
 }
+
+// ---------------------------------------------------------------------------
+// source_profile / assume-role profiles
+// ---------------------------------------------------------------------------
+ 
+#[test]
+fn reads_source_profile_field() {
+    let content = "\
+[profile app.admin]
+sso_session = corp-sso
+sso_account_id = 111111111111
+sso_role_name = AdminAccess
+region = us-east-1
+ 
+[profile mongodb-prod]
+role_arn = arn:aws:iam::222222222222:role/app-role
+source_profile = app.admin
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_assume_role.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+ 
+    // sorted: app.admin, mongodb-prod
+    assert_eq!(profiles[0].name, "app.admin");
+    assert_eq!(profiles[0].source_profile, None);
+    assert!(profiles[0].is_sso());
+ 
+    assert_eq!(profiles[1].name, "mongodb-prod");
+    assert_eq!(
+        profiles[1].source_profile,
+        Some("app.admin".to_string())
+    );
+    assert!(!profiles[1].is_sso());
+}
+ 
+#[test]
+fn source_profile_defaults_to_none() {
+    let content = "\
+[profile no-source]
+region = us-east-1
+";
+    let path = common::write_temp_config("aws_ps_no_source_profile.ini", content);
+    let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
+ 
+    assert_eq!(profiles[0].source_profile, None);
+}

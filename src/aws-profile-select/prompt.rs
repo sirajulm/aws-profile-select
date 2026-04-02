@@ -108,6 +108,7 @@ mod tests {
             environment: environment.map(|s| s.to_string()),
             sso_session: None,
             sso_start_url: None,
+            source_profile: None,
             duration: None,
             readonly: None,
         }
@@ -266,6 +267,7 @@ mod tests {
             environment: Some("development".to_string()),
             sso_session: None,
             sso_start_url: None,
+            source_profile: None,
             duration: Some("8h".to_string()),
             readonly: None,
         }];
@@ -284,6 +286,7 @@ mod tests {
             environment: Some("production".to_string()),
             sso_session: None,
             sso_start_url: None,
+            source_profile: None,
             duration: None,
             readonly: Some(true),
         }];
@@ -302,6 +305,7 @@ mod tests {
             environment: Some("staging".to_string()),
             sso_session: None,
             sso_start_url: None,
+            source_profile: None,
             duration: Some("1h".to_string()),
             readonly: Some(true),
         }];
