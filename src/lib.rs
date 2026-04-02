@@ -110,7 +110,7 @@ pub fn parse_profiles(aws_config_path: &str) -> Result<Vec<Profile>, Box<dyn Err
                             sso_start_url,
                             source_profile,
                             duration,
-                            readonly
+                            readonly,
                         )
                     })
                     .unwrap_or((None, None, None, None, None, None));

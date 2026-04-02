@@ -198,7 +198,10 @@ mod tests {
             sso_session_profile("app.admin", "corp-sso"),
             assume_role_profile("mongodb-prod", "app.admin"),
         ];
-        assert_eq!(sso_login_profile(&profiles, "mongodb-prod"),Some("app.admin"));
+        assert_eq!(
+            sso_login_profile(&profiles, "mongodb-prod"),
+            Some("app.admin")
+        );
     }
 
     #[test]
@@ -209,7 +212,7 @@ mod tests {
         ];
         assert_eq!(sso_login_profile(&profiles, "prod-role"),Some("base-sso"));
     }
- 
+
     #[test]
     fn none_for_assume_role_with_iam_source() {
         let profiles = vec![
@@ -228,6 +231,7 @@ mod tests {
     // -----------------------------------------------------------------------
     // sso_login_profile — mixed list
     // -----------------------------------------------------------------------
+
     #[test]
     fn identifies_sso_profile_in_mixed_list() {
         let profiles = vec![
@@ -237,7 +241,7 @@ mod tests {
         ];
 
         assert!(sso_login_profile(&profiles, "iam-admin").is_none());
-        assert_eq!(sso_login_profile(&profiles, "sso-prod"),Some("sso-prod"));
+        assert_eq!(sso_login_profile(&profiles, "sso-prod"), Some("sso-prod"));
         assert!(sso_login_profile(&profiles, "iam-readonly").is_none());
     }
 

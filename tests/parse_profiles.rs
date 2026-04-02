@@ -465,13 +465,10 @@ region = us-east-1
     assert_eq!(profiles[0].source_profile, None);
     assert!(profiles[0].is_sso());
     assert_eq!(profiles[1].name, "mongodb-prod");
-    assert_eq!(
-        profiles[1].source_profile,
-        Some("app.admin".to_string())
-    );
+    assert_eq!(profiles[1].source_profile,Some("app.admin".to_string()));
     assert!(!profiles[1].is_sso());
 }
- 
+
 #[test]
 fn source_profile_defaults_to_none() {
     let content = "\
@@ -481,4 +478,5 @@ region = us-east-1
     let path = common::write_temp_config("aws_ps_no_source_profile.ini", content);
     let profiles = parse_profiles(path.to_str().unwrap()).unwrap();
     assert_eq!(profiles[0].source_profile, None);
+
 }
