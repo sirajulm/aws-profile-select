@@ -1,7 +1,7 @@
 [tools]
 "cargo:cargo-dist" = "0.31.0"
 "cargo:cargo-llvm-cov" = "latest"
-rust = "1.94.1"
+rust = "1.95.0"
 
 [tasks.build]
 description = "Build the project"
