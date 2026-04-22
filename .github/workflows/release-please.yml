@@ -17,7 +17,7 @@ jobs:
       # By using a PAT instead of GITHUB_TOKEN, the tag created by
       # release-please will trigger other workflows (e.g. cargo-dist's
       # release.yml which runs on push tags).
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         id: release
         with:
           token: ${{ secrets.GK_TOKEN_PAT }}
