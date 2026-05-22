@@ -1,5 +1,5 @@
 [tools]
-"cargo:cargo-dist" = "0.31.0"
+"cargo:cargo-dist" = "0.32.0"
 "cargo:cargo-llvm-cov" = "latest"
 rust = "1.95.0"
 
