@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v2
         with:
           components: rustfmt, clippy, llvm-tools
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v2
         with:
           components: llvm-tools
 
