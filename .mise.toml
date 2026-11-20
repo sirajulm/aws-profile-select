@@ -1,5 +1,5 @@
 [tools]
-"cargo:cargo-dist" = "0.31.0"
+"cargo:cargo-dist" = "0.34.0"
 "cargo:cargo-llvm-cov" = "latest"
 rust = { version = "1.95.0", components = "rustfmt,clippy,llvm-tools" }
 
