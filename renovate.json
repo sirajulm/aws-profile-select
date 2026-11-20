@@ -1,5 +1,24 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "ignorePaths": [".github/workflows/release.yml"]
+  "ignorePaths": [".github/workflows/release.yml"],
+  "platformAutomerge": false,
+  "packageRules": [
+    {
+      "description": "Merge non-major updates once every check is green",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "mise version pinned in workflows next to a renovate comment",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "version: (?<currentValue>\\S+) # renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)"
+      ],
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    }
+  ]
 }
