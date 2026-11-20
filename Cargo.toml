@@ -23,7 +23,7 @@ dialoguer = "0.12.0"
 dirs = "6"
 
 [dev-dependencies]
-serial_test = "3"
+serial_test = "4"
 
 # The profile that 'dist' will build with
 [profile.dist]
