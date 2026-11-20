@@ -67,19 +67,16 @@ pub fn run_interactive(profiles: &[Profile], current_aws_profile: &str) -> Optio
         // Multi-level selection: environment first, then profile.
         // ESC at profile level goes back to environment; ESC at environment level exits.
         'outer: loop {
-            match select_environment(&environments) {
-                None => return None, // ESC at environment level: exit
-                Some(env_idx) => {
-                    let env = &environments[env_idx];
-                    let pairs = env_map.get(env).expect(
-                        "environment key must exist in env_map as it was derived from its keys",
-                    );
-                    let display_names: Vec<&str> = pairs.iter().map(|(d, _)| d.as_str()).collect();
-                    match select_profile(&display_names, current_aws_profile) {
-                        None => continue 'outer, // ESC at profile level: back to environment
-                        Some(profile_idx) => return Some(pairs[profile_idx].1.clone()),
-                    }
-                }
+            // ESC at environment level: exit
+            let env_idx = select_environment(&environments)?;
+            let env = &environments[env_idx];
+            let pairs = env_map
+                .get(env)
+                .expect("environment key must exist in env_map as it was derived from its keys");
+            let display_names: Vec<&str> = pairs.iter().map(|(d, _)| d.as_str()).collect();
+            match select_profile(&display_names, current_aws_profile) {
+                None => continue 'outer, // ESC at profile level: back to environment
+                Some(profile_idx) => return Some(pairs[profile_idx].1.clone()),
             }
         }
     } else {

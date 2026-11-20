@@ -38,31 +38,53 @@ pub fn handle_sso_login(profiles: &[Profile], chosen_profile: &str) -> Result<()
     // Treat any execution failure (e.g. aws not in PATH) as an invalid
     // session so that the subsequent login attempt surfaces the real error.
     let session_valid = Command::new("aws")
-        .args(["sso", "login", "--profile", login_profile])
+        .args(session_check_args(login_profile))
+        .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status()
         .map(|s| s.success())
         .unwrap_or(false);
 
-    if !session_valid {
-        let status = Command::new("aws")
-            .args(["sso", "login", "--profile", chosen_profile])
-            .status()
-            .map_err(|e| {
-                format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}")
-            })?;
-        if !status.success() {
-            return Err(format!(
-                "'aws sso login --profile {}' failed with exit code: {}",
-                chosen_profile,
-                status.code().unwrap_or(-1)
-            )
-            .into());
-        }
+    if session_valid {
+        return Ok(());
+    }
+
+    // `aws sso login` needs a profile that carries the SSO settings, so log in
+    // with the SSO profile, not an assume-role profile that points at it.
+    let status = Command::new("aws")
+        .args(login_args(login_profile))
+        .status()
+        .map_err(|e| {
+            format!("Failed to execute 'aws' command. Is it installed and in PATH? Error: {e}")
+        })?;
+    if !status.success() {
+        return Err(format!(
+            "'aws sso login --profile {}' failed with exit code: {}",
+            login_profile,
+            status.code().unwrap_or(-1)
+        )
+        .into());
     }
 
     Ok(())
+}
+
+/// Arguments for a non-interactive check that the SSO session behind
+/// `profile` still yields credentials. Never opens a browser.
+fn session_check_args(profile: &str) -> [&str; 5] {
+    [
+        "sts",
+        "get-caller-identity",
+        "--profile",
+        profile,
+        "--no-cli-pager",
+    ]
+}
+
+/// Arguments for the interactive browser login for `profile`.
+fn login_args(profile: &str) -> [&str; 4] {
+    ["sso", "login", "--profile", profile]
 }
 
 // ---------------------------------------------------------------------------
@@ -269,5 +291,25 @@ mod tests {
         assert_eq!(sso_login_profile(&profiles, "SSO-Dev"), Some("SSO-Dev"));
         assert!(sso_login_profile(&profiles, "sso-dev").is_none());
         assert!(sso_login_profile(&profiles, "SSO-DEV").is_none());
+    }
+
+    // -----------------------------------------------------------------------
+    // session check and login commands
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn session_check_does_not_log_in() {
+        let args = session_check_args("sso-dev");
+        assert_eq!(&args[..2], ["sts", "get-caller-identity"]);
+        assert!(!args.contains(&"login"));
+        assert_eq!(&args[2..4], ["--profile", "sso-dev"]);
+    }
+
+    #[test]
+    fn login_uses_given_profile() {
+        assert_eq!(
+            login_args("sso-dev"),
+            ["sso", "login", "--profile", "sso-dev"]
+        );
     }
 }
