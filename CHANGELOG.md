@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.1](https://github.com/sirajulm/aws-profile-select/compare/v0.9.0...v0.9.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate dirs to v7 ([#50](https://github.com/sirajulm/aws-profile-select/issues/50)) ([6d42be8](https://github.com/sirajulm/aws-profile-select/commit/6d42be8f3095edae756511c10d90d8920ae65b34))
+* **sso:** check session with sts instead of logging in ([#52](https://github.com/sirajulm/aws-profile-select/issues/52)) ([9638318](https://github.com/sirajulm/aws-profile-select/commit/9638318519b2b4e455dfc86424059d5f91d5e122))
+
 ## [0.9.0](https://github.com/sirajulm/aws-profile-select/compare/v0.8.0...v0.9.0) (2026-04-02)
 
 
