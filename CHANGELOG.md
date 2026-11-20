@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.2](https://github.com/sirajulm/aws-profile-select/compare/v0.9.1...v0.9.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate dirs to v7 ([#55](https://github.com/sirajulm/aws-profile-select/issues/55)) ([7072fc2](https://github.com/sirajulm/aws-profile-select/commit/7072fc20c484218435f244a82f893da2db956133))
+* **release:** build with cargo-dist 0.34 on supported runners ([#56](https://github.com/sirajulm/aws-profile-select/issues/56)) ([6056653](https://github.com/sirajulm/aws-profile-select/commit/6056653c62b5e41d299ef1d56911f7a66b521771))
+
 ## [0.9.1](https://github.com/sirajulm/aws-profile-select/compare/v0.9.0...v0.9.1) (2026-11-20)
 
 
