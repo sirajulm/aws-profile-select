@@ -15,10 +15,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set up Rust toolchain (mise)
+        uses: jdx/mise-action@v5
         with:
-          components: rustfmt, clippy, llvm-tools
+          version: 2026.11.10 # renovate: datasource=github-releases depName=jdx/mise
+          install_args: rust
 
       - name: Check formatting
         run: cargo fmt --check
@@ -54,10 +55,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set up Rust toolchain (mise)
+        uses: jdx/mise-action@v5
         with:
-          components: llvm-tools
+          version: 2026.11.10 # renovate: datasource=github-releases depName=jdx/mise
+          install_args: rust
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
