@@ -1,7 +1,7 @@
 [tools]
 "cargo:cargo-dist" = "0.34.0"
 "cargo:cargo-llvm-cov" = "latest"
-rust = { version = "1.100.0", components = "rustfmt,clippy,llvm-tools" }
+rust = { version = "1.100.1", components = "rustfmt,clippy,llvm-tools" }
 
 [tasks.build]
 description = "Build the project"
